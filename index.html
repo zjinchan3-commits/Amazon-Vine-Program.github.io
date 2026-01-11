@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amazon Vine Program</title>
+  <style>
+    html { scroll-behavior: smooth; }
+    /* ================= RESET & BASE ================= */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #ffffff;
+      color: #0f1111;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* ================= TOP BAR ================= */
+    .aws-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #232f3e;
+      color: #fff;
+      font-size: 13px;
+    }
+    .aws-topbar span:last-child { color: #ff9900; }
+    /* ================= MAIN LAYOUT ================= */
+    .container {
+      width: 100%;
+      flex: 1;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .content-wrap {
+      max-width: none;
+      width: 100%;
+      margin: 0;
+      padding: 32px 40px 56px;
+    }
+    /* ================= HEADER ================= */
+    .aws-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e7e7e7;
+    }
+    .aws-logo { width: 40px; height: 40px; }
+    .aws-title { font-size: 15px; font-weight: 600; color: #232f3e; }
+    .aws-sub { font-size: 12px; color: #565959; }
+    /* ================= HERO CARD ================= */
+    .hero-card {
+      position: relative;
+      width: calc(100% + 80px);
+      max-width: none;
+      margin: 32px -40px 48px;
+      padding: 120px 32px 120px;
+      background: url('https://www.osha.gov/sites/default/files/homepage/ITA_Hero_Dec30_2.png') center/cover no-repeat;
+      border-radius: 0;
+      box-shadow: none;
+      border-bottom: 1px solid #f1f1f1ce;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.25);
+      z-index: 1;
+    }
+    .hero-card > * {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-card h1 {
+      font-size: 26px;
+      font-weight: 600;
+      margin: 0 0 16px;
+      letter-spacing: -0.012em;
+      color: #0f1111;
+    }
+    .hero-card p {
+      margin: 0 0 26px;
+      font-size: 15.5px;
+      color: #565959;
+    }
+    .hero-note {
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: #687078;
+    }
+    /* ================= FEATURE SPLIT ================= */
+    .feature-split {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 32px;
+      margin: 32px -40px 24px;
+      padding: 36px 40px;
+      background: #f8f9fa;
+      border-top: 1px solid #e7e7e7;
+      border-bottom: 1px solid #e7e7e7;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .feature-text h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 40px 0 12px;
+      padding-left: 0;
+      border-left: none;
+      color: #0f1111;
+    }
+    h2 {
+      margin-top: 0;
+      border-left: none;
+      padding-left: 0;
+    }
+    .feature-text p {
+      font-size: 14.5px;
+      color: #565959;
+      margin-bottom: 14px;
+    }
+    .feature-text ul li {
+      margin-bottom: 6px;
+    }
+    .feature-icons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: center;
+    }
+    .icon-item {
+      text-align: center;
+      padding: 18px 12px;
+      border-radius: 14px;
+      background: #f8f9fa;
+      font-size: 13px;
+      box-shadow: inset 0 0 0 1px #e7e7e7;
+    }
+    .icon-item svg {
+      width: 22px;
+      height: 22px;
+      margin-bottom: 6px;
+    }
+    @media (max-width: 768px) {
+      .feature-split {
+        grid-template-columns: 1fr;
+      }
+      .feature-icons {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    /* ================= QUICK INFO ================= */
+    .quick-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin: 0 -40px 24px;
+      background: #ffffff;
+      border-top: 1px solid #e7e7e7;
+      border-bottom: 1px solid #e7e7e7;
+    }
+    .info-item {
+      border-right: 1px solid #e7e7e7;
+      padding: 20px 16px;
+      text-align: center;
+      background: #ffffff;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .info-item:last-child { border-right: none; }
+    .info-title {
+      font-size: 12.5px;
+      color: #687078;
+      margin-bottom: 6px;
+    }
+    .info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f1111;
+    }
+    /* ================= SECTION ================= */
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 32px 0 12px;
+      padding-left: 10px;
+      border-left: 4px solid #ff9900;
+    }
+    ul { padding-left: 18px; margin: 0; }
+    li { margin-bottom: 8px; }
+    /* ================= COMPENSATION ================= */
+    .compensation {
+      margin-top: 12px;
+      background: linear-gradient(180deg, #fff8f0, #ffffff);
+      border: 1px solid #f3d9b5;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(15,17,17,.14);
+      font-size: 14px;
+    }
+    /* ================= VIDEO SECTION ================= */
+    .video-section {
+      margin: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15,17,17,.14);
+    }
+    .video-section video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* ================= GRID LAYOUT FOR INFO + VIDEO ================= */
+    .info-video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin: 40px 0;
+    }
+    @media (max-width: 768px) {
+      .info-video-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .video-section {
+        margin-bottom: 24px;
+      }
+    }
+    /* ================= MOBILE OPTIMIZATION FOR HERO CARD BACKGROUND ================= */
+    @media (max-width: 768px) {
+      .hero-card {
+        width: 100%;
+        margin: 24px 0 40px;
+        padding: 100px 20px;
+        min-height: 50vh;
+        background-position: center center;
+        background-size: cover;
+      }
+      .hero-card::before {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .hero-card h1 {
+        font-size: 22px;
+      }
+      .hero-card p {
+        font-size: 14.5px;
+      }
+      .hero-note {
+        font-size: 12px;
+      }
+    }
+    /* ================= CONTACT ================= */
+    .contact-icons {
+      display: flex;
+      gap: 14px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .contact-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(15,17,17,.22);
+      transition: transform .18s ease, box-shadow .18s ease;
+      will-change: transform;
+    }
+    .contact-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 26px rgba(15,17,17,.28);
+    }
+    .contact-item:active {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(15,17,17,.26);
+    }
+    .contact-item svg { width: 18px; height: 18px; }
+    .contact-item[href*="zoom"] { background:#2D8CFF; }
+    .contact-item[href*="wa.me"] { background:#25D366; }
+    .contact-item[href*="t.me"] { background:#2AABEE; }
+    .contact-item[href^="mailto"] { background:#007AFF; }
+    /* ================= FOOTER ================= */
+    footer {
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      color: #565959;
+      padding: 24px 12px 32px;
+      background: #fafafa;
+      border-top: 1px solid #e7e7e7;
+    }
+    footer a {
+      color: #007185;
+      margin: 0 6px;
+      text-decoration: none;
+    }
+    svg.icon { width:22px; height:22px; margin-bottom:6px; stroke:#232f3e; fill:none; stroke-width:1.6; }
+  </style>
+  <!-- ================= SVG SYMBOL DEFINITIONS ================= -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-shield" viewBox="0 0 24 24">
+      <path d="M12 2l7 3v6c0 5-3.5 9-7 11-3.5-2-7-6-7-11V5l7-3z" />
+    </symbol>
+    <symbol id="icon-doc" viewBox="0 0 24 24">
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M8 7h8M8 11h8M8 15h6" />
+    </symbol>
+    <symbol id="icon-wallet" viewBox="0 0 24 24">
+      <path d="M3 7h18v10H3z" />
+      <path d="M16 11a4 4 0 1 1-8 0" />
+    </symbol>
+  </svg>
+</head>
+<body>
+  <div class="aws-topbar">
+    <span>Amazon Web Services Console</span>
+    <span>Authorized Partner</span>
+  </div>
+  <main class="container">
+    <div class="content-wrap">
+      <header class="aws-header">
+        <svg class="aws-logo" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="#ff9900" d="M46.7 42.6c-8.4 6.2-20.6 9.5-31.1 9.5-14.7 0-27.9-5.4-37.9-14.5-.8-.7-.1-1.6.9-1 10.8 6.3 24.1 10 37.9 10 9.3 0 19.6-1.9 29-5.9 1.4-.6 2.6 1 .2 1.9z"/>
+          <path fill="#232f3e" d="M50.4 39.5c-1.1-1.4-7.3-.7-10.1-.4-.8.1-.9-.6-.2-1.1 4.6-3.2 12.2-2.3 13.1-1.1.9 1.2-.2 8.8-4.5 12.5-.6.5-1.2.2-.9-.4 1.2-3 .9-9.6-1.4-9.5z"/>
+        </svg>
+        <div>
+          <div class="aws-title">Amazon Authorized Program</div>
+          <div class="aws-sub">Remote Digital Experience Support</div>
+        </div>
+      </header>
+      <div class="hero-card">
+        <h1>Amazon Vine Program</h1>
+        <p>Participants complete structured tasks, submit compliant feedback, and receive compensation upon completion.</p>
+        <div class="hero-note">Official onboarding • No upfront fees • Flexible schedule</div>
+      </div>
+      <section class="feature-split">
+        <div class="feature-text">
+          <h2>Why Join This Program</h2>
+          <p>This Amazon‑authorized collaboration program is designed for participants who prefer flexible, remote work with clear task structures and transparent rewards.</p>
+          <ul>
+            <li>Official onboarding with guided training</li>
+            <li>No upfront fees or hidden requirements</li>
+            <li>Flexible schedule aligned to your availability</li>
+          </ul>
+        </div>
+        <div class="feature-icons">
+          <div class="icon-item">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield" /></svg>
+            <p>Authorized Framework</p>
+          </div>
+          <div class="icon-item">
+            <svg class="icon" aria-hidden="true"><use href="#icon-doc" /></svg>
+            <p>Structured Tasks</p>
+          </div>
+          <div class="icon-item">
+            <svg class="icon" aria-hidden="true"><use href="#icon-wallet" /></svg>
+            <p>Secure Compensation</p>
+          </div>
+        </div>
+      </section>
+      <div class="quick-info">
+        <div class="info-item">
+          <div class="info-title">Daily Time</div>
+          <div class="info-value">1–2 hours</div>
+        </div>
+        <div class="info-item">
+          <div class="info-title">Work Mode</div>
+          <div class="info-value">100% Remote (Mobile Phone)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-title">Wage Payment</div>
+          <div class="info-value">Fast & Safe</div>
+        </div>
+      </div>
+
+      <!-- 新增：信息与视频并排网格布局 -->
+      <section class="info-video-grid">
+        <div class="info-text">
+          <h2>Responsibilities</h2>
+          <ul>
+            <li>Your daily workflow: First, log in to the Amazon workbench. Then, complete all orders assigned to you by the system.</li>
+            <li>Submit a 5-star rating or a premium review for every assigned order, following all requirements.</li>
+            <li>Boost seller ranking and visibility</li>
+          </ul>
+          <h2>Requirements</h2>
+          <ul>
+            <li>Mobile phone or computer</li>
+            <li>Stable internet connection</li>
+            <li>Follow platform guidelines</li>
+          </ul>
+          <h2>Compensation</h2>
+          <div class="compensation">
+            <p><strong>Daily Base:</strong> $200+</p>
+            <p><strong>Monthly Income:</strong> $7,000 – $15,000</p>
+            <p><strong>Payments:</strong> Exodus Wallet / PayPal / Cash App / Vemo </p>
+          </div>
+        </div>
+
+        <div class="video-section">
+          <video controls autoplay muted loop playsinline>
+            <source src="https://m.media-amazon.com/images/G/01/Vine/VoicePortal/video/Vine_Voice_Final.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer>
+    <div>
+      <a href="#">Terms of Use and Optimized Product Terms</a>
+      <a href="#">Privacy Statement</a>
+      <a href="#">Cookies</a>
+      <a href="#">Online Job Postings</a>
+    </div>
+    <div>© 1998–2025, Amazon.com Inc. or its affiliates</div>
+  </footer>
+</body>
+</html>
